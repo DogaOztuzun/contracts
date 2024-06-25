@@ -87,6 +87,17 @@ abstract contract RedeemingBondingCurveBase_v1 is
         sellFor(_msgSender(), _depositAmount, _minAmountOut);
     }
 
+    /// @inheritdoc IRedeemingBondingCurveBase_v1
+    function sellNative(uint _minAmountOut) public virtual payable {
+        (bool success, ) = payable(address(issuanceToken)).call{value: msg.value}("");
+        
+        if (!success) {
+            revert("RedeemingBondingCurveBase_v1: Failed to transfer native token");
+        }
+
+        sellFor(_msgSender(), msg.value, _minAmountOut);
+    }
+
     //--------------------------------------------------------------------------
     // OnlyOrchestrator Functions
 

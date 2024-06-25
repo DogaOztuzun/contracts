@@ -8,9 +8,8 @@ import {IBondingCurveBase_v1} from
     "@fm/bondingCurve/interfaces/IBondingCurveBase_v1.sol";
 
 // External Interfaces
-import {IERC20Issuance_v1} from
-    "@fm/bondingCurve/interfaces/IERC20Issuance_v1.sol";
 import {IERC20} from "@oz/token/ERC20/IERC20.sol";
+import {INativeTokenIssuance} from "@fm/bondingCurve/tokens/INativeTokenIssuance.sol";
 
 // External Libraries
 import {SafeERC20} from "@oz/token/ERC20/utils/SafeERC20.sol";
@@ -44,7 +43,6 @@ abstract contract BondingCurveBase_v1 is IBondingCurveBase_v1, Module_v1 {
             || super.supportsInterface(interfaceId);
     }
 
-    using SafeERC20 for IERC20Issuance_v1;
     using SafeERC20 for IERC20;
 
     //--------------------------------------------------------------------------
@@ -54,7 +52,7 @@ abstract contract BondingCurveBase_v1 is IBondingCurveBase_v1, Module_v1 {
     uint internal constant BPS = 10_000;
 
     /// @dev The token the Curve will mint and burn from
-    IERC20Issuance_v1 internal issuanceToken;
+    INativeTokenIssuance internal issuanceToken;
 
     /// @dev Indicates whether the buy functionality is open or not.
     ///      Enabled = true || disabled = false.
@@ -381,7 +379,7 @@ abstract contract BondingCurveBase_v1 is IBondingCurveBase_v1, Module_v1 {
     /// @param _issuanceToken The token which will be issued by the Bonding Curve.
     function _setIssuanceToken(address _issuanceToken) internal virtual {
         emit IssuanceTokenUpdated(address(issuanceToken), _issuanceToken);
-        issuanceToken = IERC20Issuance_v1(_issuanceToken);
+        issuanceToken = INativeTokenIssuance(_issuanceToken);
     }
 
     function _checkBuyIsEnabled() internal view {

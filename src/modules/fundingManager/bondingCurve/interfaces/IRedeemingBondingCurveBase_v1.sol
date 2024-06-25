@@ -55,6 +55,11 @@ interface IRedeemingBondingCurveBase_v1 {
     /// @param _minAmountOut The minimum acceptable amount the user expects to receive from the transaction.
     function sell(uint _depositAmount, uint _minAmountOut) external;
 
+    /// @notice Sell collateral for the sender's address.
+    /// @dev Redirects to the internal function `_sellOrder` by passing the sender's address and deposit amount.
+    /// @param _minAmountOut The minimum acceptable amount the user expects to receive from the transaction.
+    function sellNative(uint _minAmountOut) external payable;
+
     /// @notice Opens the selling functionality for the collateral.
     /// @dev Only callable by the Orchestrator_v1 admin.
     ///      Reverts if selling is already open.

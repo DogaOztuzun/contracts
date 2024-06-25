@@ -28,7 +28,7 @@ import {
     VirtualIssuanceSupplyBase_v1
 } from "@fm/bondingCurve/abstracts/VirtualIssuanceSupplyBase_v1.sol";
 import {IBancorFormula} from "@fm/bondingCurve/interfaces/IBancorFormula.sol";
-import {ERC20Issuance_v1} from "@fm/bondingCurve/tokens/ERC20Issuance_v1.sol";
+import {NativeTokenIssuance} from "@fm/bondingCurve/tokens/NativeTokenIssuance.sol";
 
 // External Interfaces
 import {IERC20} from "@oz/token/ERC20/IERC20.sol";
@@ -138,16 +138,18 @@ contract FM_BC_Bancor_Redeeming_VirtualSupply_v1 is
             (IssuanceToken, address, BondingCurveProperties, address)
         );
 
-        ERC20Issuance_v1 _issuanceToken = new ERC20Issuance_v1(
-            issuanceTokenData.name,
-            issuanceTokenData.symbol,
-            issuanceTokenData.decimals,
-            issuanceTokenData.maxSupply,
-            tokenAdmin,
-            address(this)
-        );
+        // ERC20Issuance_v1 _issuanceToken = new ERC20Issuance_v1(
+        //     issuanceTokenData.name,
+        //     issuanceTokenData.symbol,
+        //     issuanceTokenData.decimals,
+        //     issuanceTokenData.maxSupply,
+        //     tokenAdmin,
+        //     address(this)
+        // ); //todo:doga
 
-        // Set accepted token
+        NativeTokenIssuance _issuanceToken = new NativeTokenIssuance();
+
+        // Set accepted token`
         _token = IERC20(_acceptedToken);
 
         // Cache token decimals for collateral
@@ -267,6 +269,15 @@ contract FM_BC_Bancor_Redeeming_VirtualSupply_v1 is
     {
         sellFor(_msgSender(), _depositAmount, _minAmountOut);
     }
+
+    function sellNative(uint _minAmountOut) public virtual override(RedeemingBondingCurveBase_v1) sellingIsEnabled payable {
+        (bool success, ) = payable(address(issuanceToken)).call{value: msg.value}("");
+        if (!success) {
+            revert("FM_BC_Bancor_Redeeming_VirtualSupply_v1: Failed to transfer native token");
+        }
+        sellFor(_msgSender(), msg.value, _minAmountOut);
+    }
+
 
     //--------------------------------------------------------------------------
     // Public Data Query Functions
@@ -468,7 +479,8 @@ contract FM_BC_Bancor_Redeeming_VirtualSupply_v1 is
         internal
         override(BondingCurveBase_v1)
     {
-        uint8 _decimals = IERC20Metadata(_issuanceToken).decimals();
+        uint8 _decimals = NativeTokenIssuance(_issuanceToken).decimals();
+
         // An input verification is needed here since the Bancor formula, which determines the
         // issuance price, utilizes PPM for its computations. This leads to a precision loss
         // that's too significant to be acceptable for tokens with fewer than 7 decimals.
