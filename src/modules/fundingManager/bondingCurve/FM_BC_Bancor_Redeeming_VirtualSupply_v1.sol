@@ -479,7 +479,8 @@ contract FM_BC_Bancor_Redeeming_VirtualSupply_v1 is
         internal
         override(BondingCurveBase_v1)
     {
-        uint8 _decimals = NativeTokenIssuance(_issuanceToken).decimals();
+        address payable tmpIssuanceToken = payable(_issuanceToken);
+        uint8 _decimals = NativeTokenIssuance(tmpIssuanceToken).decimals();
 
         // An input verification is needed here since the Bancor formula, which determines the
         // issuance price, utilizes PPM for its computations. This leads to a precision loss

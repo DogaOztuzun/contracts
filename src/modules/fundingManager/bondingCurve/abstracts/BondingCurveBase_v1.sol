@@ -9,7 +9,7 @@ import {IBondingCurveBase_v1} from
 
 // External Interfaces
 import {IERC20} from "@oz/token/ERC20/IERC20.sol";
-import {INativeTokenIssuance} from "@fm/bondingCurve/tokens/INativeTokenIssuance.sol";
+import {INativeTokenIssuance} from "@fm/bondingCurve/interfaces/INativeTokenIssuance.sol";
 
 // External Libraries
 import {SafeERC20} from "@oz/token/ERC20/utils/SafeERC20.sol";

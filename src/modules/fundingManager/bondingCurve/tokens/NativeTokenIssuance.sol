@@ -3,8 +3,8 @@ pragma solidity ^0.8.0;
 
 import {Address} from "@oz/utils/Address.sol";
 
-import "./INativeTokenIssuance.sol";
-import "./INativeMinter.sol";
+import "../interfaces/INativeTokenIssuance.sol";
+import "../interfaces/INativeMinter.sol";
 
 contract NativeTokenIssuance is INativeTokenIssuance {
     using Address for address payable;
