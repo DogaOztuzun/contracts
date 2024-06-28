@@ -40,12 +40,15 @@ contract SetupInvestableWorkstream is Test, DeploymentScript {
     // NOTE: In case the script should be run on a chain WITHOUT an already deployed formula or collateral token,
     //       comment the following lines and uncomment the pre-steps in the run() function
 
-    address collateralTokenAddress =
-        vm.envAddress("BONDING_CURVE_COLLATERAL_TOKEN");
-    ERC20 collateralToken = ERC20(collateralTokenAddress);
+    // address collateralTokenAddress =
+    //     vm.envAddress("BONDING_CURVE_COLLATERAL_TOKEN");
+    // ERC20 collateralToken = ERC20(collateralTokenAddress);
 
-    address bancorFormulaAddress = vm.envAddress("BANCOR_FORMULA_ADDRESS");
-    BancorFormula formula = BancorFormula(bancorFormulaAddress);
+    // address bancorFormulaAddress = vm.envAddress("BANCOR_FORMULA_ADDRESS");
+    // BancorFormula formula = BancorFormula(bancorFormulaAddress);
+    
+    ERC20Mock collateralToken;
+    BancorFormula formula;
 
     // ========================================================================
     // BONDING CURVE PARAMETERS
@@ -57,9 +60,9 @@ contract SetupInvestableWorkstream is Test, DeploymentScript {
     uint32 RESERVE_RATIO_FOR_BUYING = 333_333;
     uint32 RESERVE_RATIO_FOR_SELLING = 333_333;
     uint BUY_FEE = 0;
-    uint SELL_FEE = 100;
+    uint SELL_FEE = 0;
     bool BUY_IS_OPEN = true;
-    bool SELL_IS_OPEN = false;
+    bool SELL_IS_OPEN = true;
     uint INITIAL_ISSUANCE_SUPPLY = 100;
     uint INITIAL_COLLATERAL_SUPPLY = 33;
 
@@ -91,6 +94,8 @@ contract SetupInvestableWorkstream is Test, DeploymentScript {
             );
             //!!!! This is not a real ERC20 implementation. Before going into production change this deployment!!!!
             collateralToken = new ERC20Mock("Inverter USD", "iUSD");
+            collateralToken.mint(orchestratorAdmin, 1000000000000 ether);
+            
             console2.log(
                 "\t-Inverter Mock USD Deployed at address: %s ",
                 address(collateralToken)
